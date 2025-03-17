@@ -51,14 +51,18 @@ extension Snapshotting where Value == UIView, Format == UIImage {
         drawHierarchyInKeyWindow: Bool = false,
         markerColors: [UIColor] = [],
         showUserInputLabels: Bool = true,
-        shouldRunInHostApplication: Bool = true
+        shouldRunInHostApplication: Bool = true,
+        perceptualPrecision: Float = 1
     ) -> Snapshotting {
         guard !shouldRunInHostApplication || isRunningInHostApplication else {
             fatalError("Accessibility snapshot tests cannot be run in a test target without a host application")
         }
 
         return Snapshotting<UIView, UIImage>
-            .image(drawHierarchyInKeyWindow: drawHierarchyInKeyWindow)
+            .image(
+              drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
+              perceptualPrecision: perceptualPrecision
+            )
             .pullback { view in
                 let containerView = AccessibilitySnapshotView(
                     containedView: view,
@@ -180,11 +184,15 @@ extension Snapshotting where Value == UIView, Format == UIImage {
         colors: [UIColor] = AccessibilitySnapshotView.defaultMarkerColors,
         maxPermissibleMissedRegionWidth: CGFloat = 0,
         maxPermissibleMissedRegionHeight: CGFloat = 0,
+        perceptualPrecision: Float = 1,
         file: StaticString = #file,
         line: UInt = #line
     ) -> Snapshotting {
         return Snapshotting<UIView, UIImage>
-            .image(drawHierarchyInKeyWindow: drawHierarchyInKeyWindow)
+            .image(
+              drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
+              perceptualPrecision: perceptualPrecision
+            )
             .pullback { view in
                 do {
                     return try HitTargetSnapshotView(
@@ -260,7 +268,8 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
         drawHierarchyInKeyWindow: Bool = false,
         markerColors: [UIColor] = [],
         showUserInputLabels: Bool = true,
-        shouldRunInHostApplication: Bool = true
+        shouldRunInHostApplication: Bool = true,
+        perceptualPrecision: Float = 1
     ) -> Snapshotting {
         return Snapshotting<UIView, UIImage>
             .accessibilityImage(
@@ -269,7 +278,8 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
                 drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
                 markerColors: markerColors,
                 showUserInputLabels: showUserInputLabels,
-                shouldRunInHostApplication: shouldRunInHostApplication
+                shouldRunInHostApplication: shouldRunInHostApplication,
+                perceptualPrecision: perceptualPrecision
             )
             .pullback { viewController in
                 viewController.view
@@ -304,6 +314,7 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
         useMonochromeSnapshot: Bool = true,
         drawHierarchyInKeyWindow: Bool = false,
         colors: [UIColor] = AccessibilitySnapshotView.defaultMarkerColors,
+        perceptualPrecision: Float = 1,
         file: StaticString = #file,
         line: UInt = #line
     ) -> Snapshotting {
@@ -312,6 +323,7 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
                 useMonochromeSnapshot: useMonochromeSnapshot,
                 drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
                 colors: colors,
+                perceptualPrecision: perceptualPrecision,
                 file: file,
                 line: line
             )
